@@ -28,7 +28,7 @@ Built fully offline, with open-source models only. No LangChain. No cloud APIs.
 ## Setup
 
 1. **Clone the repo:**
-git clone https://github.com/your-username/your-repo.git
+git clone https://github.com/SajivJess/RAG-CHATBOT
 cd your-repo
 
 2. **Install dependencies:**
