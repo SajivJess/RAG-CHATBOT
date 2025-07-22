@@ -1,0 +1,13 @@
+streamlit>=1.25.0
+qdrant-client>=1.6.0
+pymupdf>=1.22.0
+python-docx
+sentence-transformers
+pandas
+numpy
+llama-cpp-python  # if you are using llama.cpp from Python (for local LLM)
+# --- Optionals for chunking/cleaning:
+nltk
+tqdm
+# --- Optional utils:
+PyYAML

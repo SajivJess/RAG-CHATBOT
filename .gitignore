@@ -1,0 +1,39 @@
+# Python bytecode/cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints
+
+# Environment folders
+venv/
+.venv/
+env/
+ENV/
+
+# VS Code folder/settings
+.vscode/
+
+# Models folder (only upload small demo/test models if explicitly required)
+models/
+*.gguf
+*.ggml
+*.bin
+
+# Qdrant vector DB folder (optional, re-initialize on setup)
+qdrant_data/
+qdrant/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Streamlit cache (optional)
+.streamlit/
+
+# Test/output files (optional)
+*.log
+*.tmp
