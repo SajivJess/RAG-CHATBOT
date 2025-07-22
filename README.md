@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 _A submission for the 2025 RAPID ACCELERATION PARTNERS, INC. hackathon_
 
 # TEAM CODE-O-PHILES Document-based RAG Chatbot
@@ -154,3 +155,6 @@ If you encounter errors, please see our `troubleshooting.md`, and/or:
 - Made by Team CODE-O-PHILES.
 
 ---
+=======
+# RAG-CHATBOT
+>>>>>>> 708002e08dc149f3e55207b269304831260c1ec8
