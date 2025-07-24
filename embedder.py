@@ -1,5 +1,9 @@
 from typing import List, Dict
 from sentence_transformers import SentenceTransformer
+embedder = SentenceTransformer('intfloat/e5-small-v2', device='cuda')
+# or, after instantiation:
+# embedder = embedder.to('cuda')
+
 from qdrant_helper import create_collection, add_documents, search
 from config import EMBEDDING_MODEL_NAME
 

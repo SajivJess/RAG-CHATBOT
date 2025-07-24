@@ -89,7 +89,11 @@ Streamlit app, neon theme, clean expanders for all file/document management.
 - Resource usage (verified via Task Manager and nvidia-smi):  
  - RAM: ≤ 12GB
  - GPU VRAM: ≤ 4GB with quantized 7B Llama/GGUF
- - Typical CPU/GPU load: low
+ - Typical CPU load: low
+
+ **Important note:**  
+As of July 2024, GPU mode for `llama-cpp-python` is unavailable on native Windows; all runs are in CPU mode only, regardless of hardware.  
+- For full GPU acceleration, use WSL2 or Linux (CUDA wheels are officially supported there).
 
 - **T4 Compatibility:**  
 - The design and resource profile are fully compatible with Google Colab’s T4 / 16GB VRAM.
