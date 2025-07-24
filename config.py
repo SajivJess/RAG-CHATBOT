@@ -22,18 +22,15 @@ LLM_MODEL_PATH = "models/llama/tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf"
 LLM_MAX_INPUT_TOKENS = 1024
 DEVICE = "cpu"                                 # or "gpu" if using CUDA-enabled llama.cpp build
 
-PROMPT_TEMPLATE = """
-[Instruction]: Using only the content below, return the most concise and specific answer to the user's question.
-If possible, quote or summarize just the most relevant sentence, clause, or bullet from the provided content.
+PROMPT_TEMPLATE = (
+    "Instruction: Using only the content below, answer the user's question specifically and concisely. "
+    "If the answer is not present, reply exactly with: 'The answer is not available in the provided documents.'\n\n"
+    "Document Source: File: {filename} Page: {page_number} Chunk ID: {chunk_id}\n"
+    "Content:\n{chunk_text}\n"
+    "User Question: {user_query}\n"
+    "Answer:"
+)
 
-If the answer is not present, reply: "The answer is not available in the provided documents."
-Document Source:
-File: {filename}
-Page: {page_number}
-Chunk ID: {chunk_id}
-{chunk_text}
-User Question: {user_query}
-"""
 
 # === UI Settings ===
 UI_TITLE = "🦙 Offline RAG Chatbot"
