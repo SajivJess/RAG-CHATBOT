@@ -160,7 +160,7 @@ if "chat_history" not in st.session_state:
 if "feedback" not in st.session_state:
     st.session_state.feedback = []
 
-ddef render_source(source, highlight=None):
+def render_source(source, highlight=None):
     if source:
         with st.expander("📄 Source Context", expanded=False):
             st.text(f"📁 File: {source.get('filename', 'N/A')}")

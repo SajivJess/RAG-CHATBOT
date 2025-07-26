@@ -20,16 +20,18 @@ def extract_relevant_lines_with_numbers(query: str, chunk_text: str, min_match=2
         if overlap > max_overlap:
             max_overlap = overlap
         line_scores.append(overlap)
-    found_line_nums = []
+    found_line_nums = set()
     for idx, score in enumerate(line_scores):
         if score == max_overlap and score >= min_match:
             start = max(0, idx - context_lines)
             end = min(len(lines), idx + 1 + context_lines)
-            found_line_nums.extend(i for i in range(start, end) if lines[i].strip())
-    found_line_nums = sorted(set(found_line_nums))
+            for i in range(start, end):
+                if lines[i].strip():
+                    found_line_nums.add(i)
+    found_line_nums = sorted(found_line_nums)
     if found_line_nums:
         matched = " ".join([lines[i].strip() for i in found_line_nums])
-        line_indices = [i+1 for i in found_line_nums]
+        line_indices = [i + 1 for i in found_line_nums]
     else:
         matched = lines[0].strip() if lines else "(no match)"
         line_indices = [1] if lines else []
@@ -43,44 +45,47 @@ def format_proof_context(matched_lines, page_number, line_nums):
     else:
         return f"{heading}\n(No direct supporting text was extracted from this chunk.)"
 
+def is_list_question(user_query: str):
+    """Detect if user is asking for all principles, all items, etc."""
+    list_words = ["all ", "list", "principle", "principles", "bullets", "points", "enumerate"]
+    t = user_query.lower()
+    return any(w in t for w in list_words)
+
 def answer_question(user_query: str) -> dict:
     print(f"❓ User query: {user_query}")
 
-    # Step 1: Embed the user query
     try:
         query_vector = embed_query(user_query)
     except Exception as e:
         print(f"❌ Failed to embed query: {e}")
-        return {
-            "answer": "Failed to process your query due to embedding error.",
-            "source": None
-        }
+        return {"answer": "Failed to process your query due to embedding error.", "source": None}
 
-    # Step 2: Retrieve top-k relevant document chunks via Qdrant
     try:
-        top_chunks = retrieve_top_k_chunks(query_vector, top_k=3)
+        # Boost top_k to ENSURE all list chunks are fetched
+        top_chunks = retrieve_top_k_chunks(query_vector, top_k=15)
     except Exception as e:
         print(f"❌ Retrieval failed: {e}")
-        return {
-            "answer": "Failed to retrieve relevant information.",
-            "source": None
-        }
+        return {"answer": "Failed to retrieve relevant information.", "source": None}
 
-    # Step 3: If no relevant chunks found, return a fallback response
-    if not top_chunks:
-        return {
-            "answer": "No relevant context found in the documents.",
-            "source": None
-        }
+    if not top_chunks or not isinstance(top_chunks[0], dict) or "chunk_text" not in top_chunks[0]:
+        return {"answer": "No relevant context found in the documents.", "source": None}
 
-    # Step 4: Use the most relevant chunk to generate an answer
-    selected_chunk = top_chunks[0]
-
-    if not isinstance(selected_chunk, dict) or "chunk_text" not in selected_chunk:
-        return {
-            "answer": "Internal error: Invalid chunk format passed to LLM.",
-            "source": None
-        }
+    # --------- NEW: Combine all chunks that look like they have 'principle' or are list-numbered ---------
+    list_chunks = []
+    for c in top_chunks:
+        lines = c['chunk_text'].splitlines()
+        if ("principle" in c['chunk_text'].lower() 
+            or sum(1 for l in lines if re.match(r'^\s*\d+\.\s', l)) > 0):
+            list_chunks.append(c)
+    if not list_chunks:
+        list_chunks = top_chunks[:1]
+    combined_text = "\n".join([c['chunk_text'] for c in list_chunks])
+    selected_chunk = {
+        'chunk_text': combined_text,
+        'filename': list_chunks[0]['filename'],
+        'page_number': list_chunks[0]['page_number'],
+        'chunk_id': ",".join([c['chunk_id'] for c in list_chunks])
+    }
 
     try:
         answer = generate_answer(selected_chunk, user_query)
@@ -88,7 +93,7 @@ def answer_question(user_query: str) -> dict:
         print(f"❌ LLM generation failed: {e}")
         answer = "Failed to generate an answer."
 
-    # Step 5: Prepare proof-of-document context (best match lines + page + lines)
+    # Proof extraction
     matched_lines, matched_line_nums = extract_relevant_lines_with_numbers(
         user_query, selected_chunk.get("chunk_text", "")
     )
@@ -97,8 +102,6 @@ def answer_question(user_query: str) -> dict:
         selected_chunk.get("page_number", "N/A"),
         matched_line_nums
     )
-
-    # Step 6: Return answer and proof context
     return {
         "answer": answer,
         "source": {
