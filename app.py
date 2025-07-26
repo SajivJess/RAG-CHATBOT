@@ -160,21 +160,17 @@ if "chat_history" not in st.session_state:
 if "feedback" not in st.session_state:
     st.session_state.feedback = []
 
-def render_source(source, highlight=None):
+ddef render_source(source, highlight=None):
     if source:
         with st.expander("📄 Source Context", expanded=False):
             st.text(f"📁 File: {source.get('filename', 'N/A')}")
             st.text(f"📄 Page: {source.get('page_number', 'N/A')} | 🔖 Chunk ID: {source.get('chunk_id', 'N/A')}")
-            st.markdown("#### 📌 Matched Text")
-            matched = source.get("chunk_text", "")
-            if highlight and highlight in matched:
-                pat = re.escape(highlight.strip())
-                matched = re.sub(f'({pat})', r'<mark style="background: #26f7fd44">\1</mark>', matched, flags=re.I)
-                st.markdown(f"<div style='color:#eee'>{matched}</div>", unsafe_allow_html=True)
-            else:
-                st.info(matched)
+            # === This uses only the precise proof content (with heading and line numbers) ===
+            proof = source.get("matched_content") or "Proof from document:\n(No direct supporting text was extracted from this chunk.)"
+            st.markdown(proof)
     else:
         st.info("No matching document chunk found.")
+
 
 def pretty_bot_answer(ans):
     ans = ans.strip()
