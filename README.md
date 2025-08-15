@@ -1,166 +1,175 @@
-<<<<<<< HEAD
-_A submission for the 2025 RAPID ACCELERATION PARTNERS, INC. hackathon_
+# 🤖 TEAM CODE-O-PHILES — Document-based RAG Chatbot
 
-# TEAM CODE-O-PHILES Document-based RAG Chatbot
+---
 
 ## 🚀 Overview
+A **Retrieval-Augmented Generation (RAG) chatbot** that answers **strictly** from your uploaded PDF and Word documents.  
+Built fully **offline**, using **open-source models only** — **No LangChain. No cloud APIs.**
 
-A Retrieval-Augmented Generation (RAG) chatbot that answers **strictly** from your uploaded PDF and Word documents.  
-Built fully offline, with open-source models only. No LangChain. No cloud APIs.  
-**Compliant with all hackathon rules (see below for details).**
-
----
-
-## Features
-
-- 📁 **Upload any number of PDF/DOCX files** (drag-and-drop, sidebar UI)
-- 🔎 **Filewise query filtering and preview**
-- ⚡️ **Fast retrieval** with Qdrant (one vector search per question)
-- 🦙 **Open-source LLM** (Llama.cpp or equivalent, local quantized model)
-- 🧠 **Accurate source citations** (document name, page, chunk id)
-- ⏳ **Response time**: well below 15 seconds on RTX 3050/Ryzen 7000 (see below)
-- 🛡️ **Everything runs offline/local** — no API calls at inference time
-- 💾 **Download chat history**, 📋 copy answers, 👍/👎 feedback, and source chunk highlight in UI
-- 👁️‍🗨️ **Modern Streamlit UI** (no LangChain, no cloud, no external inference)
+✅ **Compliant with all hackathon rules** (see compliance checklist below).
 
 ---
 
-# Demo Video : https://drive.google.com/drive/folders/1wRsFsptnuP_xbp1jgTxkt3wvQEe83iXU?usp=sharing
+## ✨ Features
+- 📁 Upload any number of PDF/DOCX files (drag-and-drop, sidebar UI)
+- 🔎 Filewise query filtering and preview
+- ⚡ Fast retrieval with Qdrant (**one vector search per question**)
+- 🦙 Open-source LLM (Llama.cpp or equivalent, local quantized model)
+- 🧠 Accurate source citations (document name, page, chunk ID)
+- ⏳ Response time: <15 seconds on RTX 3050 / Ryzen 7000
+- 🛡️ 100% Offline — no API calls at inference time
+- 💾 Download chat history, 📋 copy answers, 👍/👎 feedback
+- 📄 Source chunk highlighting in UI
+- 👁️‍🗨️ Modern Streamlit UI (no LangChain, no cloud, no external inference)
 
-## Setup  
+---
 
-1. **Clone the repo:**
+## 🎥 Demo Video
+📌 [**Watch Demo**](https://drive.google.com/drive/folders/1wRsFsptnuP_xbp1jgTxkt3wvQEe83iXU?usp=sharing)
+
+---
+
+## ⚙️ Setup
+
+### 1️⃣ Clone the repo
+```bash
 git clone https://github.com/SajivJess/RAG-CHATBOT
-cd your-repo
+cd RAG-CHATBOT
+```
 
-2. **Install dependencies:**
+### 2️⃣ Install dependencies
+Make sure **Python 3.10+** is installed, then run:
+```bash
+pip install -r requirements.txt
+```
 
-3. **Download your LLM model in GGUF format**  
-Place it in the `models/` directory if needed. (e.g. TinyLlama, Llama2-7B Q4_K_M, etc.)
+### 3️⃣ Download your LLM model (GGUF format)
+Place it in the `models/` directory.
 
-4. **Launch the app:**
+Examples:
+- **TinyLlama**
+- **Llama2-7B Q4_K_M**
+
+### 4️⃣ Launch the app
+```bash
 streamlit run app.py
-
-
----
-
-## Usage
-
-- **Upload documents:** In the sidebar’s "Upload Files" expander, drag and drop PDFs or Word docs.
-- **Ask questions:** Type your question in the chat box and press Enter.
-- **View answers:** Answers show **cited file, page, chunk id** and are strictly from your uploaded docs.
-- **Optional:**  
- - *Preview* file chunks in the sidebar  
- - *Restrict* search to specific files  
- - *Delete* old documents  
- - *Download* complete chat history
+```
 
 ---
 
-## Architecture & Design Decisions
+## 🛠️ Usage
 
-- **Chunking:**  
-Uses [sentence-based, sliding window with overlap] chunks for semantic completeness.  
-*Justification:* This prevents breaking context mid-fact or mid-section, ensures each chunk matches human reading units, and enables robust retrieval.
+1. 📥 **Upload documents** — Drag & drop PDFs or Word docs in the sidebar's "Upload Files" section.  
+2. ❓ **Ask questions** — Type your query in the chat box and press Enter.  
+3. 📄 **View answers** — Responses come strictly from uploaded docs, with cited file, page, and chunk ID.
 
-- **Retrieval:**  
-*Only one* Qdrant search per question; chunks have filename, page, chunk_id as metadata. File-based filters are passed to retrieval as needed.
+### Optional Tools:
+- 🔍 Preview file chunks in the sidebar
+- 📂 Restrict search to specific files
+- 🗑 Delete old documents
+- 💾 Download complete chat history
 
-- **LLM & Embeddings:**  
-*All open source.* We use [sentence-transformers] for embeddings and Llama.cpp (local quantized GGUF model) for answer generation.
+---
 
-- **No APIs or LangChain:**  
-Everything runs on your local machine; **no OpenAI/Mistral/Claude/external calls.**
+## 🏗 Architecture & Design Decisions
 
-- **UI:**  
-Streamlit app, neon theme, clean expanders for all file/document management.
+### 📄 Chunking
+- **Sentence-based**, sliding window with overlap for semantic completeness
+- Prevents breaking context mid-fact
+- Ensures natural reading units & improves retrieval quality
+
+### 🔎 Retrieval
+- **Single Qdrant vector search** per question
+- Metadata includes `filename`, `page`, `chunk_id`
+- File filters applied when needed
+
+### 🦙 LLM & Embeddings
+- **100% open-source**
+- Embeddings: [`sentence-transformers`](https://www.sbert.net/)
+- LLM: [`llama.cpp`](https://github.com/ggerganov/llama.cpp) (quantized GGUF model)
+
+### 🎨 UI
+- Built with **Streamlit**
+- Neon theme
+- Clean expanders for file/document management
 
 ---
 
 ## 💻 Hardware & Performance
 
-- **Test Platform:**  
- - **GPU:** NVIDIA RTX 3050 (4GB VRAM)
- - **CPU:** AMD Ryzen 7000 series
- - **RAM:** 16GB
- - **OS:** Windows 11
+**Test Platform:**
+- 💻 GPU: NVIDIA RTX 3050 (4GB VRAM)
+- ⚙️ CPU: AMD Ryzen 7000 series
+- 🧠 RAM: 16GB
+- 🖥 OS: Windows 11
 
-- **Performance:**  
-- All models (embedding + LLM) run locally; Qdrant stores vectors on disk.
-- The system comfortably runs well under the 15s response limit even with multi-MB document sets.
-- Resource usage (verified via Task Manager and nvidia-smi):  
- - RAM: ≤ 12GB
- - GPU VRAM: ≤ 4GB with quantized 7B Llama/GGUF
- - Typical CPU load: low
+**Performance:**
+- All models run locally
+- Qdrant stores vectors on disk
+- Responses well under 15s even for large documents
+- RAM ≤ 12GB
+- GPU VRAM ≤ 4GB (quantized 7B Llama/GGUF)
+- Low CPU load
 
- **Important note:**  
-As of July 2024, GPU mode for `llama-cpp-python` is unavailable on native Windows; all runs are in CPU mode only, regardless of hardware.  
-- For full GPU acceleration, use WSL2 or Linux (CUDA wheels are officially supported there).
-
-- **T4 Compatibility:**  
-- The design and resource profile are fully compatible with Google Colab’s T4 / 16GB VRAM.
+> **Note:** GPU mode for `llama-cpp-python` is unavailable on native Windows (as of July 2024). Runs in CPU mode only. For GPU acceleration, use WSL2 or Linux.
 
 ---
 
-## 📖 Sample QA and Screenshots
-
-*See `submission.pdf` for 10 queries, answers, and actual UI screenshots.*
-
----
-
-## ✨ Enhancements
-
-- 📋 Copy-to-clipboard, 💾 one-click chat download
-- 👍/👎 feedback per answer (stored in session state)
-- Highlighted matched context in answer chunk
-- Per-file upload/delete, chunk table, and preview
-- Sidebar with expand/collapse for minimal distraction
+## 📸 Sample QA & Screenshots
+See **submission.pdf** for:
+- 10 queries & answers
+- Actual UI screenshots
 
 ---
 
-## 🧪 Compliance Checklist
-
-| Requirement                   | Status      | Notes                                    |
-|-------------------------------|------------|------------------------------------------|
-| ≤15s response (on GPU)        | ✅         | T4, 3050 validated                       |
-| No LangChain/API/external     | ✅         | All local, all open source               |
-| Qdrant required               | ✅         | Used throughout                          |
-| One vector search per Q       | ✅         | Code enforces this                       |
-| Source citation (file/page/id)| ✅         | UI always shows                          |
-| Chunking justified            | ✅         | Section above and README                 |
-| No chit-chat/greetings needed | ✅         | System says "No answer" if not in docs   |
-| Modular code, modern UI       | ✅         | Each function/file pure and separate     |
+## 🔧 Enhancements
+- 📋 Copy-to-clipboard answers
+- 💾 One-click chat download
+- 👍/👎 Feedback per answer (stored in session state)
+- 🔍 Highlight matched context in answer chunk
+- 🗂 Per-file upload/delete
+- 🖼 Sidebar expand/collapse for minimal distraction
 
 ---
 
-## ⚙️ How Perplexity & ChatGPT Were Used
+## ✅ Compliance Checklist
 
-- **Perplexity.ai** was used for:  
- - Researching latest RAG/QA design patterns.
- - Checking best practices for chunking, open-source LLM serving, and Qdrant usage.
-- **ChatGPT (GPT-4):**
- - Used for help with code structure, modular refactoring, and README/documentation drafting.
- - Some UI polish suggestions.
-- Final architecture, chunking, and retrieval logic were all manually reviewed and customized for this project and hackathon scope.
-
-_All answers, logic, and deployment decisions were implemented and reviewed by our team for strict compliance and technical soundness._
+| Requirement                       | Status | Notes |
+|-----------------------------------|--------|-------|
+| ≤15s response (on GPU)            | ✅     | Tested on T4 & RTX 3050 |
+| No LangChain/API/external         | ✅     | Fully local |
+| Qdrant required                   | ✅     | Implemented |
+| One vector search per Q           | ✅     | Enforced |
+| Source citation                   | ✅     | File/page/id in UI |
+| Chunking justified                | ✅     | Sentence-based with overlap |
+| No chit-chat                      | ✅     | Returns "No answer" if outside docs |
+| Modular code, modern UI           | ✅     | Functionally separated |
 
 ---
 
-## 🛠️ If You Hit Any Issues
+## 🧪 How Perplexity & ChatGPT Were Used
 
-If you encounter errors, please see our `troubleshooting.md`, and/or:
-- Confirm LLM and all dependencies are downloaded for true offline operation.
-- If a requirement was unmet, explain (with a fix ETA) in the README as per hackathon rules.
+**Perplexity.ai**
+- Researched latest RAG/QA design patterns
+- Studied chunking strategies
+- Investigated open-source LLM serving & Qdrant usage
+
+**ChatGPT (GPT-4)**
+- Assisted in code structure & modular refactoring
+- Helped polish README/documentation
+
+> Final architecture, chunking, and retrieval logic were fully reviewed and implemented by the team for hackathon compliance.
+
+---
+
+## 🆘 Troubleshooting
+If you encounter issues:
+- Verify model & dependencies are downloaded for offline operation
+- Check `troubleshooting.md` for fixes
 
 ---
 
 ## 🏆 Submission & Credits
+All code, results, screenshots, and unedited live demo video provided as per hackathon rules.
 
-- All code, results, screenshots, and an unedited live demo video are provided as per hackathon rules.
-- Made by Team CODE-O-PHILES.
-
----
-=======
-# RAG-CHATBOT
->>>>>>> 708002e08dc149f3e55207b269304831260c1ec8
+👨‍💻 **Made by Team CODE-O-PHILES**
